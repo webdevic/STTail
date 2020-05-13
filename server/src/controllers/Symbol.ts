@@ -1,16 +1,16 @@
 const url = require("url");
-import StocktwitsClient from "../lib/api_clients/stocktwitsClient";
+import SymbolService from "../lib/services/symbol";
 
 export default class SymbolController {
-    private stocktwitsClient: StocktwitsClient;
-    constructor(stocktwitsClient = new StocktwitsClient()) {
-        this.stocktwitsClient = stocktwitsClient;
+    private service: SymbolService;
+    constructor(service = new SymbolService()) {
+        this.service = service;
     }
     public async search(req: any, res: any): Promise<void> {
         try {
             const queryObject = url.parse(req.url, true).query;
-            const key: string = queryObject.key;
-            res.status(200).json(await this.stocktwitsClient.searchSymbol(key));
+            const keys: string[] = queryObject.key.split(",");
+            res.status(200).json(await this.service.search(keys));
         } catch (e) {
             res.status(e.status || 500).json(e);
         }

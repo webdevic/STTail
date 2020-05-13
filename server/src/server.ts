@@ -1,4 +1,4 @@
-import WebServer from "./lib/WebServer";
+import WebServer from "./lib/webServer";
 
 const server = new WebServer({
     port: 3000,

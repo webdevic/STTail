@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
-import SymbolController from "../controllers/Symbol";
-import MessageController from "../controllers/Message";
+import SymbolController from "../controllers/symbol";
+import MessageController from "../controllers/message";
 
 export const routers = (controllers: { symbol: SymbolController; message: MessageController }): Router => {
     const router = Router();

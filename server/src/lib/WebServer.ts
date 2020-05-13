@@ -3,10 +3,10 @@ import compression from "compression";
 import cors, { CorsOptions } from "cors";
 import express, { Application } from "express";
 import http, { Server } from "http";
-import { routers } from "./Router";
+import { routers } from "./router";
 import StocktwitsClient from "./api_clients/stocktwitsClient";
-import SymbolController from "../controllers/Symbol";
-import MessageController from "../controllers/Message";
+import SymbolController from "../controllers/symbol";
+import MessageController from "../controllers/message";
 
 export interface IServerConfig {
     corsOptions: CorsOptions;
@@ -36,14 +36,13 @@ export default class WebServer {
 
     private createApp(): Application {
         const app = express();
-        const stocktwitsClient = new StocktwitsClient();
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(
             "/api/v1/",
             routers({
-                symbol: new SymbolController(stocktwitsClient),
-                message: new MessageController(stocktwitsClient),
+                symbol: new SymbolController(),
+                message: new MessageController(),
             })
         );
         app.get("/", (req, res) => res.send("Hello ME!"));

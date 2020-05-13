@@ -1,5 +1,5 @@
 import request from "supertest";
-import WebServer from "../lib/WebServer";
+import WebServer from "../lib/webServer";
 
 let app: import("http").Server;
 
