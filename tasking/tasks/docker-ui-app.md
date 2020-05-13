@@ -1,0 +1,3 @@
+- [ ] Create `dockerfile`
+- [ ] Setup `docker-compose`
+- [ ] Add `ui:up` script in `package.json`
