@@ -1,0 +1,4 @@
+- [x] Setup `create-react-app` with `typescript`
+- [x] Setup `eslint` and `prettier`
+- [x] Setup `jest`
+- [x] Setup `Material-UI`
