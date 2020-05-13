@@ -4,7 +4,7 @@
 
 - [ ] [Allow the user to input a US stock symbol or several symbols (eg: AAPL, BABA, BAC, etc...)](./epics/search-stock.md)
 
-- [ ] [Pull tweets from StockTwits that mention this symbol (stock symbols usually have a $ before them, like: $AAPL, $BABA, etc...)](./epics/retrive-tweets.md)
+- [ ] [Pull tweets from StockTwits that mention this symbol (stock symbols usually have a $ before them, like: $AAPL, $BABA, etc...)](./epics/retrieve-tweets.md)
 
 - [ ] [Display the latest matching tweets. How you display them is up to you.](./epics/show-tweets.md)
 
