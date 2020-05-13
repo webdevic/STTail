@@ -1,6 +1,6 @@
 # Project Management
 
-* [Initial Setup](./epics/initial-setup.md)
+* - [ ] [Initial Setup](./epics/initial-setup.md)
 
 * Allow the user to input a US stock symbol or several symbols (eg: AAPL, BABA, BAC, etc...)
 
