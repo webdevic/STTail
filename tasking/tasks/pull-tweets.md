@@ -1,0 +1,1 @@
+- [ ] Create `GET` `api/symbol/:id/?since=` endpoint to query tweets using [StockTwits streams/symbol API](https://api.stocktwits.com/developers/docs/api#streams-symbol-docs)
