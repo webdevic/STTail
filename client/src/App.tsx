@@ -1,21 +1,35 @@
 import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
+import Link from "@material-ui/core/Link";
+import ProTip from "./components/ProTip";
+import ComboBox from "./components/ComboBox";
 
-function App() {
+function Copyright() {
     return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                    Edit <code>src/App.tsx</code> and save to reload.
-                </p>
-                <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-                    Learn React
-                </a>
-            </header>
-        </div>
+        <Typography variant="body2" color="textSecondary" align="right">
+            {"Copyright © "}
+            <Link color="inherit" href="https://haos.io/">
+                STTail
+            </Link>{" "}
+            {new Date().getFullYear()}
+            {"."}
+        </Typography>
     );
 }
 
-export default App;
+export default function App() {
+    return (
+        <Container maxWidth="sm">
+            <Box my={4}>
+                <Typography variant="h4" component="h1" gutterBottom>
+                    StockTwits Search
+                </Typography>
+                <ComboBox label="Stock Symbol" />
+                <ProTip />
+                <Copyright />
+            </Box>
+        </Container>
+    );
+}

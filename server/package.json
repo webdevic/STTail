@@ -7,7 +7,7 @@
         "build": "tsc",
         "format": "prettier --write .",
         "start:dev": "ts-node-dev --respawn --transpileOnly ./src/server.ts",
-        "start": "build && nodemon ./dist/server.js",
+        "start": "tsc && nodemon ./dist/server.js",
         "test": "jest"
     },
     "keywords": [],

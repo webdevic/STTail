@@ -39,6 +39,17 @@ export default class WebServer {
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(
+            cors({
+                origin: (origin, callback) => {
+                    if (origin && ["http://localhost:3001"].indexOf(origin) !== -1) {
+                        callback(null, true);
+                    } else {
+                        callback(new Error("Not allowed by CORS"));
+                    }
+                },
+            })
+        );
+        app.use(
             "/api/v1/",
             routers({
                 symbol: new SymbolController(),
