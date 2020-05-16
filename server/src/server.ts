@@ -10,7 +10,7 @@ const corsOptions = {
         }
     },
 };
-const port = process.env.NODE_ENV ? parseInt(process.env.NODE_ENV) : 3000;
+const port = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
 const server = new WebServer({
     corsOptions,
