@@ -7,6 +7,7 @@ const createApp = (done: jest.DoneCallback) => {
     const server = new WebServer({
         port: 3000,
         corsOptions: {},
+        version: "/api/v1/",
     });
     return server.app.listen(done);
 };
