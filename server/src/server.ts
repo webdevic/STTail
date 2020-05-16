@@ -2,7 +2,6 @@ import WebServer from "./lib/webServer";
 require("dotenv").config();
 
 const whitelist = (process.env.CORS_ALLOWED_HOSTS || "").split(",");
-console.info({ whitelist });
 const server = new WebServer({
     corsOptions: {
         origin: (origin: string | undefined, callback: Function) => {
