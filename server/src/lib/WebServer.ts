@@ -1,16 +1,16 @@
+import { routers } from "./router";
 import bodyParser from "body-parser";
 import compression from "compression";
 import cors, { CorsOptions } from "cors";
 import express, { Application } from "express";
 import http, { Server } from "http";
-import { routers } from "./router";
-import StocktwitsClient from "./api_clients/stocktwitsClient";
-import SymbolController from "../controllers/symbol";
 import MessageController from "../controllers/message";
+import SymbolController from "../controllers/symbol";
 
 export interface IServerConfig {
     corsOptions: CorsOptions;
     port: number;
+    version: string;
 }
 
 export default class WebServer {
@@ -38,19 +38,10 @@ export default class WebServer {
         const app = express();
         app.use(bodyParser.json());
         app.use(bodyParser.urlencoded({ extended: true }));
+        app.use(compression());
+        app.use(cors(this.config.corsOptions));
         app.use(
-            cors({
-                origin: (origin, callback) => {
-                    if (origin && ["http://localhost:3001"].indexOf(origin) !== -1) {
-                        callback(null, true);
-                    } else {
-                        callback(new Error("Not allowed by CORS"));
-                    }
-                },
-            })
-        );
-        app.use(
-            "/api/v1/",
+            this.config.version,
             routers({
                 symbol: new SymbolController(),
                 message: new MessageController(),

@@ -1,8 +1,21 @@
 import WebServer from "./lib/webServer";
 
+const whitelist = ["http://localhost:3001"];
+const corsOptions = {
+    origin: (origin: string | undefined, callback: Function) => {
+        if (origin && whitelist.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
+};
+const port = process.env.NODE_ENV ? parseInt(process.env.NODE_ENV) : 3000;
+
 const server = new WebServer({
-    port: 3000,
-    corsOptions: {},
+    corsOptions,
+    port,
+    version: "/api/v1/",
 });
 
 server.start();
