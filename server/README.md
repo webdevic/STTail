@@ -3,7 +3,7 @@
 ## Add `.env` for CORS settings
 
 ```bash
-CORS_ALLOWED_HOSTS="http://localhost:3001"
+echo "CORS_ALLOWED_HOSTS='http://localhost:3001'" > .env
 ```
 
 ## Install dependencies
