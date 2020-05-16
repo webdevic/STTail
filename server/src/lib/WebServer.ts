@@ -47,7 +47,6 @@ export default class WebServer {
                 message: new MessageController(),
             })
         );
-        app.get("/", (req, res) => res.send("Hello ME!"));
         return app;
     }
 }

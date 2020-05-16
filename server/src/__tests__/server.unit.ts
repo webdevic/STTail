@@ -1,7 +1,7 @@
 import request from "supertest";
 import WebServer from "../lib/webServer";
 
-let app: import("http").Server;
+let expressServer: import("http").Server;
 
 const createApp = (done: jest.DoneCallback) => {
     const server = new WebServer({
@@ -9,21 +9,22 @@ const createApp = (done: jest.DoneCallback) => {
         corsOptions: {},
         version: "/api/v1/",
     });
+    server.app.get("/", (req, res) => res.send("Hello ME!"));
     return server.app.listen(done);
 };
 
 beforeAll(async (done) => {
-    app = createApp(done);
+    expressServer = createApp(done);
 });
 
 afterAll(async (done) => {
-    app.close(done);
+    expressServer.close(done);
     jest.resetModules();
 });
 
 describe("Server default route", () => {
     it("should GET 'Hello ME!'", async () => {
-        const res = await request(app).get("/");
+        const res = await request(expressServer).get("/");
         expect(res.text).toEqual("Hello ME!");
     });
 });
