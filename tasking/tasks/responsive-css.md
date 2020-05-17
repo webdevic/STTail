@@ -1,1 +1,3 @@
-- [ ] Add different screen size break point in CSS
+#
+
+- [x] Add different screen size break point in CSS
