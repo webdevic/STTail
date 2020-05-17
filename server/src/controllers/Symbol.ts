@@ -12,7 +12,7 @@ export default class SymbolController {
             const keys: string[] = queryObject.key.split(",");
             res.status(200).json(await this.service.search(keys));
         } catch (e) {
-            res.status(e.status || 500).json(e);
+            res.status(e.status || 500);
         }
     }
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { MenuList, MenuItem } from "@material-ui/core";
 
 type IDLProps = {
@@ -18,11 +18,11 @@ const DropdownList: React.FC<IDLProps> = (props) => {
         }
     }
     return (
-        <MenuList autoFocusItem onKeyDown={handleListKeyDown} style={style}>
+        <MenuList onKeyDown={handleListKeyDown} style={style}>
             {menuItems &&
                 menuItems.map((item: any) => (
                     <MenuItem id={item.id} onClick={handleClose} key={item.symbol}>
-                        {item.title}
+                        ${item.symbol} | {item.title}
                     </MenuItem>
                 ))}
         </MenuList>

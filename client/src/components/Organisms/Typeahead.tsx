@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { makeStyles, createStyles, Box } from "@material-ui/core";
 import InputField from "../Atoms/InputField";
-import DropdownList from "../Atoms/DropdownList";
+import DropdownList from "../Modecules/DropdownList";
 
 type ITProps = {
     inputLabel: string;
@@ -35,7 +35,7 @@ const Typeahead: React.FC<ITProps> = (props) => {
             <DropdownList
                 menuItems={menuItems}
                 onItemClick={onItemClick}
-                style={{ display: dropdownVisible ? "block" : "none" }}
+                style={{ display: dropdownVisible ? "flex" : "none" }}
             />
         </Box>
     );

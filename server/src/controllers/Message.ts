@@ -10,7 +10,7 @@ export default class MessageController {
             const id: number = req.params.symbolId;
             res.status(200).json(await this.service.getTweetsBySymbolId(id));
         } catch (e) {
-            res.status(e.status || 500).json(e);
+            res.status(e.status || 500);
         }
     }
 }

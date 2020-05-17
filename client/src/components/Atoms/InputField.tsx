@@ -20,14 +20,18 @@ const InputField: React.FC<IIFProps> = (props) => {
         setKeys(e.currentTarget.value);
     };
     return (
-        <TextField
-            fullWidth
-            id="standard-basic"
-            label={label}
-            onChange={handleInputChange}
-            value={keys}
-            onFocus={onInputFieldFocus}
-        />
+        <form noValidate autoComplete="off">
+            <TextField
+                aria-autocomplete="none"
+                autoComplete=""
+                fullWidth
+                id="standard-basic"
+                label={label}
+                onChange={handleInputChange}
+                value={keys}
+                onFocus={onInputFieldFocus}
+            />
+        </form>
     );
 };
 

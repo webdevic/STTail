@@ -1,5 +1,5 @@
 import React from "react";
-import Typeahead from "../Modecules/Typeahead";
+import Typeahead from "./Typeahead";
 import StockSymbolsArray from "../Modecules/StockSymbolsArray";
 
 type ICBProps = {
