@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ComboBox from "../components/Organisms/ComboBox";
 import { AppBar, Paper } from "@material-ui/core";
 import MessageList from "../components/Modecules/MessageList";
@@ -51,12 +51,27 @@ export const Stock = () => {
     const [messages, setMessages] = useState<any[]>([]);
     const [showError, setShowError] = useState(false);
     const [showFetching, setShowFetching] = useState(false);
+    let [refresh, setRefresh] = useState(0);
     const refreshManager = new RefreshManager();
+    useEffect(() => {
+        if (refresh > 0) {
+            refreshSymbolMessage();
+        } else {
+            refreshManager.stop();
+        }
+    }, [refresh]);
     const refreshSymbolMessage = async () => {
+        setShowFetching(true);
         stockSymbols.forEach(async (symbol: any) => {
-            const data = await fetchMessagesById(symbol.id, messages, stockSymbols);
-            setMessages(deDuplicate(messages.concat(data)));
+            setTimeout(async () => {
+                const data = await fetchMessagesById(symbol.id, messages, stockSymbols);
+                const deDuplicated = deDuplicate(messages.concat(data));
+                console.log(data, messages, deDuplicated);
+                setMessages(deDuplicated);
+                setShowFetching(false);
+            }, 5000);
         });
+        setStockSymbols(stockSymbols);
     };
     const searchSymbols = (keys: string) => {
         if (keys) {
@@ -83,11 +98,16 @@ export const Stock = () => {
             .filter((symbol: any) => symbol.id !== parseInt(id))
             .concat(menuItems.filter((item: any) => item.id === parseInt(id)));
         setShowFetching(true);
-        fetchMessagesById(parseInt(id), messages, updateSymbols).then((data: any[]) => setMessages(deDuplicate(data)));
-        setShowFetching(false);
+        fetchMessagesById(parseInt(id), messages, updateSymbols)
+            .then((data: any[]) => setMessages(deDuplicate(data)))
+            .then(() => {
+                setShowFetching(false);
+            });
         setStockSymbols(updateSymbols);
         setDropdownVisible(false);
-        refreshManager.setIntervle(refreshSymbolMessage, 120000);
+        refreshManager.setIntervle(() => {
+            setRefresh(updateSymbols.length);
+        }, 120000);
     };
     const deleteSymbol = (id: string) => {
         if (stockSymbols.length <= 10) {
@@ -106,7 +126,9 @@ export const Stock = () => {
         );
         setMessages(updateMessages);
         setStockSymbols(updateSymbols);
-        refreshManager.setIntervle(refreshSymbolMessage, 120000);
+        refreshManager.setIntervle(() => {
+            setRefresh(updateSymbols.length);
+        }, 120000);
     };
     const showDropdown = () => {
         setDropdownVisible(true);
