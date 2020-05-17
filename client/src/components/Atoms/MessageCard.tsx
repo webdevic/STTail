@@ -51,7 +51,11 @@ const MessageCard: React.FC<{ message: any }> = (props) => {
 
     return (
         <Card className={classes.root}>
-            <CardMedia className={classes.cover} image={message.user.avatar_url} title="Live from space album cover" />
+            <CardMedia
+                className={classes.cover}
+                image={message.user.avatar_url ? message.user.avatar_url : "/logo192.png"}
+                title="Live from space album cover"
+            />
             <div className={classes.details}>
                 <CardContent className={classes.content}>
                     <Typography component="h6" variant="h6">

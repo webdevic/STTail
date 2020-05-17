@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ComboBox from "../components/Organisms/ComboBox";
 import { AppBar, Paper } from "@material-ui/core";
 import MessageList from "../components/Modecules/MessageList";
@@ -19,10 +19,7 @@ const fetchMessagesById = async (id: number, oldMessages: any[], symbols: any[])
             throw error;
         });
     const messages = await req;
-    const deDuplicated: any[] = [];
-    [...messages, ...oldMessages].forEach((message) => {
-        if (deDuplicated.findIndex((m) => m.id === message.id) === -1) deDuplicated.push(message);
-    });
+    const deDuplicated = deDuplicate([...messages, ...oldMessages]);
     deDuplicated.sort((a: any, b: any) => b.id - a.id);
     symbols.forEach(
         (symbol: any) =>
@@ -30,19 +27,23 @@ const fetchMessagesById = async (id: number, oldMessages: any[], symbols: any[])
                 (message) => message.symbols.findIndex((s: any) => s.id === symbol.id) !== -1
             ))
     );
-    return messages ?? [];
+    return [deDuplicated, symbols];
 };
 
 class RefreshManager {
     private nIntervId: any;
     public setIntervle(handler: () => void, duration: number) {
+        console.log("old setIntervle:", this.nIntervId);
         this.stop();
         this.nIntervId = setInterval(handler, duration);
+        console.log("new setIntervle:", this.nIntervId);
     }
     public stop() {
         if (this.nIntervId) clearInterval(this.nIntervId);
     }
 }
+
+const refreshManager = new RefreshManager();
 
 export const Stock = () => {
     const [menuItems, setMenuItems] = useState([]);
@@ -51,27 +52,16 @@ export const Stock = () => {
     const [messages, setMessages] = useState<any[]>([]);
     const [showError, setShowError] = useState(false);
     const [showFetching, setShowFetching] = useState(false);
-    let [refresh, setRefresh] = useState(0);
-    const refreshManager = new RefreshManager();
-    useEffect(() => {
-        if (refresh > 0) {
-            refreshSymbolMessage();
-        } else {
-            refreshManager.stop();
-        }
-    }, [refresh]);
-    const refreshSymbolMessage = async () => {
-        setShowFetching(true);
-        stockSymbols.forEach(async (symbol: any) => {
+    const refreshSymbolMessage = async (symbols: any[]) => {
+        symbols.forEach(async (symbol: any) => {
+            setShowFetching(true);
             setTimeout(async () => {
-                const data = await fetchMessagesById(symbol.id, messages, stockSymbols);
-                const deDuplicated = deDuplicate(messages.concat(data));
-                console.log(data, messages, deDuplicated);
-                setMessages(deDuplicated);
+                const [m, s] = await fetchMessagesById(symbol.id, [...messages], [...symbols]);
+                setMessages(m);
+                setStockSymbols(s);
                 setShowFetching(false);
             }, 5000);
         });
-        setStockSymbols(stockSymbols);
     };
     const searchSymbols = (keys: string) => {
         if (keys) {
@@ -98,16 +88,15 @@ export const Stock = () => {
             .filter((symbol: any) => symbol.id !== parseInt(id))
             .concat(menuItems.filter((item: any) => item.id === parseInt(id)));
         setShowFetching(true);
-        fetchMessagesById(parseInt(id), messages, updateSymbols)
-            .then((data: any[]) => setMessages(deDuplicate(data)))
-            .then(() => {
-                setShowFetching(false);
-            });
-        setStockSymbols(updateSymbols);
+        fetchMessagesById(parseInt(id), [...messages], [...updateSymbols]).then(([m, s]) => {
+            setMessages(m);
+            setStockSymbols(s);
+            refreshManager.setIntervle(async () => {
+                await refreshSymbolMessage([...updateSymbols]);
+            }, 120000);
+            setShowFetching(false);
+        });
         setDropdownVisible(false);
-        refreshManager.setIntervle(() => {
-            setRefresh(updateSymbols.length);
-        }, 120000);
     };
     const deleteSymbol = (id: string) => {
         if (stockSymbols.length <= 10) {
@@ -126,8 +115,8 @@ export const Stock = () => {
         );
         setMessages(updateMessages);
         setStockSymbols(updateSymbols);
-        refreshManager.setIntervle(() => {
-            setRefresh(updateSymbols.length);
+        refreshManager.setIntervle(async () => {
+            await refreshSymbolMessage([...updateSymbols]);
         }, 120000);
     };
     const showDropdown = () => {
@@ -151,7 +140,28 @@ export const Stock = () => {
                 />
             </AppBar>
             <Paper variant="outlined" style={{ background: "#f3e5f5" }}>
-                <Alert severity="info" style={{ marginBottom: 20, display: showFetching ? "flex" : "none" }}>
+                <Alert
+                    severity="info"
+                    style={{
+                        marginTop: 20,
+                        marginBottom: 20,
+                        marginLeft: 50,
+                        marginRight: 50,
+                        display: !showFetching ? "flex" : "none",
+                    }}
+                >
+                    Total Tweets: {messages.length}.
+                </Alert>
+                <Alert
+                    severity="success"
+                    style={{
+                        marginTop: 20,
+                        marginBottom: 20,
+                        marginLeft: 50,
+                        marginRight: 50,
+                        display: showFetching ? "flex" : "none",
+                    }}
+                >
                     Fetching messages...
                 </Alert>
                 <MessageList messages={messages} />
