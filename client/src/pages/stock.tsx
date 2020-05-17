@@ -4,30 +4,30 @@ import { AppBar, Paper } from "@material-ui/core";
 import MessageList from "../components/Modecules/MessageList";
 import Alert from "@material-ui/lab/Alert";
 
-const deDuplicate = (messages: any[]) => {
-    const deDuplicated: any[] = [];
-    messages.forEach((message) => {
-        if (deDuplicated.findIndex((m) => m.id === message.id) === -1) deDuplicated.push(message);
+const deDuplicate = (items: any[]) => {
+    const deDup: any[] = [];
+    items.forEach((item) => {
+        if (deDup.findIndex((i) => i.id === item.id) === -1) deDup.push(item);
     });
-    return deDuplicated;
+    return deDup;
 };
 
-const fetchMessagesById = async (id: number, oldMessages: any[], symbols: any[]): Promise<any[]> => {
+const fetchMessagesById = async (id: number, oldMsgs: any[], inputSymbols: any[]): Promise<any[]> => {
     const req = fetch(`http://localhost:3000/api/v1/message/${id}`)
         .then((res) => res.json())
         .catch((error) => {
             throw error;
         });
-    const messages = await req;
-    const deDuplicated = deDuplicate([...messages, ...oldMessages]);
+    const data = await req;
+    const deDuplicated = deDuplicate([...data, ...oldMsgs]);
     deDuplicated.sort((a: any, b: any) => b.id - a.id);
-    symbols.forEach(
+    inputSymbols.forEach(
         (symbol: any) =>
             (symbol.messages = deDuplicated.filter(
-                (message) => message.symbols.findIndex((s: any) => s.id === symbol.id) !== -1
+                (m: any) => m.symbols.findIndex((s: any) => s.id === symbol.id) !== -1
             ))
     );
-    return [deDuplicated, symbols];
+    return [deDuplicated, inputSymbols];
 };
 
 class RefreshManager {
@@ -53,15 +53,17 @@ export const Stock = () => {
     const [showError, setShowError] = useState(false);
     const [showFetching, setShowFetching] = useState(false);
     const refreshSymbolMessage = async (symbols: any[]) => {
-        symbols.forEach(async (symbol: any) => {
+        for (let symbol of symbols) {
             setShowFetching(true);
-            setTimeout(async () => {
-                const [m, s] = await fetchMessagesById(symbol.id, [...messages], [...symbols]);
-                setMessages(m);
-                setStockSymbols(s);
-                setShowFetching(false);
-            }, 5000);
-        });
+            await fetchMessagesById(symbol.id, [...messages], [...symbols])
+                .then(([m, s]) => {
+                    setMessages(m);
+                    setStockSymbols(s);
+                })
+                .then(() => {
+                    setShowFetching(false);
+                });
+        }
     };
     const searchSymbols = (keys: string) => {
         if (keys) {
@@ -88,14 +90,17 @@ export const Stock = () => {
             .filter((symbol: any) => symbol.id !== parseInt(id))
             .concat(menuItems.filter((item: any) => item.id === parseInt(id)));
         setShowFetching(true);
-        fetchMessagesById(parseInt(id), [...messages], [...updateSymbols]).then(([m, s]) => {
-            setMessages(m);
-            setStockSymbols(s);
-            refreshManager.setIntervle(async () => {
-                await refreshSymbolMessage([...updateSymbols]);
-            }, 120000);
-            setShowFetching(false);
-        });
+        fetchMessagesById(parseInt(id), [...messages], [...updateSymbols])
+            .then(([m, s]) => {
+                setMessages(m);
+                setStockSymbols(s);
+            })
+            .then(() => {
+                refreshManager.setIntervle(async () => {
+                    await refreshSymbolMessage([...updateSymbols]);
+                }, 120000);
+                setShowFetching(false);
+            });
         setDropdownVisible(false);
     };
     const deleteSymbol = (id: string) => {
