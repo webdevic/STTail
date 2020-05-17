@@ -2,14 +2,22 @@ import React from "react";
 import Chip from "@material-ui/core/Chip";
 import { Avatar } from "@material-ui/core";
 
-const StockSymbol = (props: { label: string; handleDelete: any; count: number; className?: string }) => {
+type ISSProps = {
+    className?: string;
+    symbol: any;
+    onSymbolDelete: (value: string) => void;
+};
+
+const StockSymbol: React.FC<ISSProps> = (props) => {
+    const { className, symbol, onSymbolDelete } = props;
+    const count = symbol.messages ? (symbol.messages.length > 999 ? "999+" : symbol.messages.length) : 0;
     return (
         <Chip
-            avatar={<Avatar style={{ background: "#9999FF" }}>{props.count > 999 ? "999+" : props.count}</Avatar>}
-            className={props.className}
+            avatar={<Avatar style={{ background: "#9999FF" }}>{count}</Avatar>}
+            className={className}
             color="primary"
-            label={props.label}
-            onDelete={props.handleDelete}
+            label={`$${symbol.symbol}`}
+            onDelete={() => onSymbolDelete(symbol.id)}
             variant="outlined"
         />
     );

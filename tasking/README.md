@@ -1,8 +1,8 @@
 # Project Management
 
-- [ ] [Initial Setup](./epics/initial-setup.md)
+- [x] [Initial Setup](./epics/initial-setup.md)
 
-- [ ] [Allow the user to input a US stock symbol or several symbols (eg: AAPL, BABA, BAC, etc...)](./epics/search-stock.md)
+- [x] [Allow the user to input a US stock symbol or several symbols (eg: AAPL, BABA, BAC, etc...)](./epics/search-stock.md)
 
 - [x] [Pull tweets from StockTwits that mention this symbol (stock symbols usually have a $ before them, like: $AAPL, \$BABA, etc...)](./epics/retrieve-tweets.md)
 

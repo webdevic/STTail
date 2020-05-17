@@ -1,16 +1,43 @@
 import React, { useState } from "react";
-import { MenuList, MenuItem, Paper } from "@material-ui/core";
+import { makeStyles, createStyles, Box } from "@material-ui/core";
+import InputField from "../Atoms/InputField";
+import DropdownList from "../Atoms/DropdownList";
 
-const Typeahead = (props: { items: { id: number; symbol: string; title: string }[]; handleMenuItemClick: any }) => {
-    const [items, setItems] = useState(props.items);
+type ITProps = {
+    inputLabel: string;
+    menuItems: any[];
+    onInputFieldChange: (value: string) => void;
+    onItemClick: (value: string) => void;
+    onInputFieldFocus: () => void;
+    dropdownVisible: boolean;
+};
+
+const useStyles = makeStyles(() =>
+    createStyles({
+        root: {
+            display: "flex",
+            flexDirection: "column",
+            margin: 10,
+        },
+    })
+);
+
+const Typeahead: React.FC<ITProps> = (props) => {
+    const classes = useStyles();
+    const { dropdownVisible, inputLabel, menuItems, onInputFieldChange, onItemClick, onInputFieldFocus } = props;
     return (
-        <Paper>
-            <MenuList>
-                {items.map((item) => {
-                    return <MenuItem onClick={() => props.handleMenuItemClick(item.id)}>{item.title}</MenuItem>;
-                })}
-            </MenuList>
-        </Paper>
+        <Box className={classes.root}>
+            <InputField
+                label={inputLabel}
+                onInputFieldChange={onInputFieldChange}
+                onInputFieldFocus={onInputFieldFocus}
+            />
+            <DropdownList
+                menuItems={menuItems}
+                onItemClick={onItemClick}
+                style={{ display: dropdownVisible ? "block" : "none" }}
+            />
+        </Box>
     );
 };
 

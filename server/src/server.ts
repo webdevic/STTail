@@ -5,10 +5,10 @@ const whitelist = (process.env.CORS_ALLOWED_HOSTS || "").split(",");
 const server = new WebServer({
     corsOptions: {
         origin: (origin: string | undefined, callback: Function) => {
-            if (origin && whitelist.indexOf(origin) !== -1) {
-                callback(null, true);
-            } else {
+            if (origin && whitelist.indexOf(origin) === -1) {
                 callback(new Error(`Origin: ${origin} is not allowed by CORS`));
+            } else {
+                callback(null, true);
             }
         },
     },

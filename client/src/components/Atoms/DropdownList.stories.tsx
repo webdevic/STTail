@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import StockSymbolsArray from "./StockSymbolsArray";
+import React from "react";
+import DropdownList from "./DropdownList";
 
 export default {
-    component: StockSymbolsArray,
-    title: "StockSymbolsArray",
+    component: DropdownList,
+    title: "DropdownList",
 };
 
 const items = [
@@ -18,10 +18,20 @@ const items = [
     { type: "symbol", title: "Workstream Inc.", symbol: "WSTMF", exchange: "OTCBB", id: 4140 },
 ];
 
-export const test = () => {
-    const handleDelete = (value: string) => {
-        console.log({ value });
-        alert(`${value} deleted!`);
-    };
-    return <StockSymbolsArray stockSymbols={items} onSymbolDelete={handleDelete} />;
-};
+export const DropdownWithItems = () => (
+    <DropdownList
+        menuItems={items}
+        onItemClick={(id: string) => {
+            alert(`${id} selected`);
+        }}
+    />
+);
+
+export const DropdownWithoutItems = () => (
+    <DropdownList
+        menuItems={[]}
+        onItemClick={(id: string) => {
+            alert(`${id} selected`);
+        }}
+    />
+);

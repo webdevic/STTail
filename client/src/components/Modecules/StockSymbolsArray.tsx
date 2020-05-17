@@ -1,19 +1,18 @@
 import React from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import StockSymbol from "../Atoms/StockSymbol";
-import Paper from "@material-ui/core/Paper";
+import { Box } from "@material-ui/core";
 
-export interface IChipData {
-    count: number;
-    key: number;
-    label: string;
-}
+type ISSAProps = {
+    stockSymbols: any[];
+    onSymbolDelete: (value: string) => void;
+};
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
             display: "flex",
-            justifyContent: "center",
+            justifyContent: "left",
             flexWrap: "wrap",
             listStyle: "none",
             padding: theme.spacing(0.5),
@@ -25,29 +24,20 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const StockSymbolsArray = (props: { stockSymbols: IChipData[] }) => {
+const StockSymbolsArray: React.FC<ISSAProps> = (props) => {
+    const { stockSymbols, onSymbolDelete } = props;
     const classes = useStyles();
-    const [chipData, setChipData] = React.useState<IChipData[]>(props.stockSymbols);
-
-    const handleDelete = (chipToDelete: IChipData) => () => {
-        setChipData((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
-    };
 
     return (
-        <Paper component="ul" className={classes.root}>
-            {chipData.map((data) => {
+        <Box component="ul" className={classes.root}>
+            {stockSymbols.map((symbol) => {
                 return (
-                    <li key={data.key}>
-                        <StockSymbol
-                            count={data.count}
-                            label={data.label}
-                            handleDelete={data.label === "React" ? undefined : handleDelete(data)}
-                            className={classes.chip}
-                        />
+                    <li key={symbol.id}>
+                        <StockSymbol symbol={symbol} onSymbolDelete={onSymbolDelete} className={classes.chip} />
                     </li>
                 );
             })}
-        </Paper>
+        </Box>
     );
 };
 

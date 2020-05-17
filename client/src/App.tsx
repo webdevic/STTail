@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Link from "@material-ui/core/Link";
 import ProTip from "./components/ProTip";
-import ComboBox from "./components/ComboBox";
+import { Stock } from "./pages/Stock";
 
 function Copyright() {
     return (
@@ -26,7 +26,7 @@ export default function App() {
                 <Typography variant="h4" component="h1" gutterBottom>
                     StockTwits Search
                 </Typography>
-                <ComboBox label="Stock Symbol" />
+                <Stock />
                 <ProTip />
                 <Copyright />
             </Box>

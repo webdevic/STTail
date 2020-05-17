@@ -6,20 +6,11 @@ export default {
     title: "InputField",
 };
 
-const items = [
-    {
-        id: 686,
-        symbol: "AAPL",
-        title: "Apple Inc.",
-    },
-];
-
 export const Hello = () => (
     <InputField
-        label="Hello"
-        items={items}
-        handleMenuItemClick={(id: number) => {
-            alert(`${id} added`);
+        label="hello"
+        onInputFieldChange={(keys: string): void => {
+            console.log({ keys });
         }}
     />
 );

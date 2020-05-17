@@ -14,6 +14,6 @@ export default class SymbolService {
 
     private async searchSymbol(key: string): Promise<ISymbol[]> {
         const searchResponse = await this.client.searchSymbol(key.toUpperCase());
-        return searchResponse.results;
+        return searchResponse.results ?? [];
     }
 }

@@ -1,20 +1,33 @@
-import React, { useState } from "react";
-import { TextField, MenuList, MenuItem } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import { TextField } from "@material-ui/core";
+import useDebounce from "../../hooks/use-debounce";
 
-const InputField = (props: {
+type IIFProps = {
     label: string;
-    items: { id: number; symbol: string; title: string }[];
-    handleMenuItemClick: any;
-}) => {
-    const [items, setItems] = useState(props.items);
+    onInputFieldChange: (value: string) => void;
+    onInputFieldFocus?: (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+};
+
+const InputField: React.FC<IIFProps> = (props) => {
+    const { label, onInputFieldChange, onInputFieldFocus } = props;
+    const [keys, setKeys] = useState("");
+    const debouncedKeys = useDebounce(keys, 600);
+    useEffect(() => {
+        onInputFieldChange(debouncedKeys);
+    }, [debouncedKeys]);
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        e.preventDefault();
+        setKeys(e.currentTarget.value);
+    };
     return (
-        <TextField select id="standard-basic" label={props.label}>
-            <MenuList>
-                {items.map((item) => {
-                    return <MenuItem onClick={() => props.handleMenuItemClick(item.id)}>{item.title}</MenuItem>;
-                })}
-            </MenuList>
-        </TextField>
+        <TextField
+            fullWidth
+            id="standard-basic"
+            label={label}
+            onChange={handleInputChange}
+            value={keys}
+            onFocus={onInputFieldFocus}
+        />
     );
 };
 

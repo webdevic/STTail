@@ -6,12 +6,18 @@ export default {
     title: "StockSymbol",
 };
 
+const symbol = {
+    id: 686,
+    title: "Apple Inc.",
+    symbol: "AAPL",
+    messages: [],
+};
+
 export const aapl = () => {
     return (
         <StockSymbol
-            count={999}
-            label={"Apple Inc."}
-            handleDelete={() => {
+            symbol={symbol}
+            onSymbolDelete={() => {
                 alert("deleted");
             }}
         ></StockSymbol>
