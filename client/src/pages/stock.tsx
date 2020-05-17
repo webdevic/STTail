@@ -53,11 +53,10 @@ export const Stock = () => {
     const [showFetching, setShowFetching] = useState(false);
     const refreshManager = new RefreshManager();
     const refreshSymbolMessage = async () => {
-        const newMessages: any[] = [];
         stockSymbols.forEach(async (symbol: any) => {
-            newMessages.concat(await fetchMessagesById(symbol.id, messages, stockSymbols));
+            const data = await fetchMessagesById(symbol.id, messages, stockSymbols);
+            setMessages(deDuplicate(messages.concat(data)));
         });
-        setMessages(newMessages);
     };
     const searchSymbols = (keys: string) => {
         if (keys) {

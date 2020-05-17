@@ -15,6 +15,7 @@ const useStyles = makeStyles(() =>
         details: {
             display: "flex",
             flexDirection: "column",
+            width: "100%",
         },
         content: {
             flex: "1 0 auto",
@@ -34,6 +35,19 @@ const useStyles = makeStyles(() =>
 const MessageCard: React.FC<{ message: any }> = (props) => {
     const { message } = props;
     const classes = useStyles();
+    const createdAt = new Date(message.created_at);
+    const formatted_date =
+        createdAt.getFullYear() +
+        "-" +
+        (createdAt.getMonth() + 1) +
+        "-" +
+        createdAt.getDate() +
+        " " +
+        createdAt.getHours() +
+        ":" +
+        createdAt.getMinutes() +
+        ":" +
+        createdAt.getSeconds();
 
     return (
         <Card className={classes.root}>
@@ -43,8 +57,13 @@ const MessageCard: React.FC<{ message: any }> = (props) => {
                     <Typography component="h6" variant="h6">
                         <MessageBodyParser messageBody={message.body} />
                     </Typography>
-                    <Typography variant="subtitle1" color="textSecondary">
-                        {message.user.name ? message.user.name : message.user.username}
+                    <Typography
+                        variant="subtitle1"
+                        color="textSecondary"
+                        style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}
+                    >
+                        <span>{message.user.name ? message.user.name : message.user.username}</span>
+                        <span>{formatted_date}</span>
                     </Typography>
                 </CardContent>
             </div>
