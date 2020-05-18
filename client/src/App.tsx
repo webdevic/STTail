@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Link from "@material-ui/core/Link";
 import ProTip from "./components/ProTip";
-import { Stock } from "./pages/Stock";
+import Stock from "./pages/Stock";
 
 function Copyright() {
     return (
