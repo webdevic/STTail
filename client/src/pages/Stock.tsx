@@ -45,11 +45,12 @@ class RefreshManager {
 
 const refreshManager = new RefreshManager();
 
-export const Stock = () => {
+const Stock = () => {
     const [menuItems, setMenuItems] = useState([]);
     const [stockSymbols, setStockSymbols] = useState([]);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [messages, setMessages] = useState<any[]>([]);
+    const [messageCount, setMessageCount] = useState(0);
     const [showError, setShowError] = useState(false);
     const [showFetching, setShowFetching] = useState(false);
     const refreshSymbolMessage = async (symbols: any[]) => {
@@ -58,6 +59,7 @@ export const Stock = () => {
             await fetchMessagesById(symbol.id, [...messages], [...symbols])
                 .then(([m, s]) => {
                     setMessages(m);
+                    setMessageCount(m.length);
                     setStockSymbols(s);
                 })
                 .then(() => {
@@ -93,6 +95,7 @@ export const Stock = () => {
         fetchMessagesById(parseInt(id), [...messages], [...updateSymbols])
             .then(([m, s]) => {
                 setMessages(m);
+                setMessageCount(m.length);
                 setStockSymbols(s);
             })
             .then(() => {
@@ -119,6 +122,7 @@ export const Stock = () => {
                 ))
         );
         setMessages(updateMessages);
+        setMessageCount(updateMessages.length);
         setStockSymbols(updateSymbols);
         refreshManager.setIntervle(async () => {
             await refreshSymbolMessage([...updateSymbols]);
@@ -155,7 +159,7 @@ export const Stock = () => {
                         display: !showFetching ? "flex" : "none",
                     }}
                 >
-                    Total Tweets: {messages.length}.
+                    Total Tweets: {messageCount}.
                 </Alert>
                 <Alert
                     severity="success"
@@ -174,3 +178,5 @@ export const Stock = () => {
         </React.Fragment>
     );
 };
+
+export default Stock;
