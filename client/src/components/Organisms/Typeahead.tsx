@@ -35,7 +35,7 @@ const Typeahead: React.FC<ITProps> = (props) => {
             <DropdownList
                 menuItems={menuItems}
                 onItemClick={onItemClick}
-                style={{ display: dropdownVisible ? "block" : "none" }}
+                style={{ display: dropdownVisible && menuItems && menuItems.length > 0 ? "block" : "none" }}
             />
         </Box>
     );

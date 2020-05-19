@@ -116,12 +116,12 @@ const Stock = () => {
         fetchMessagesById(parseInt(id), [...messages], [...updateSymbols])
             .then(([m, s]) => {
                 setMessages(m);
-                setStockSymbols(s);
-                setSymbolCount(s.length);
             })
             .then(() => {
                 setShowFetching(false);
             });
+        setStockSymbols(updateSymbols);
+        setSymbolCount(updateSymbols.length);
         setDropdownVisible(false);
     };
     const deleteSymbol = (id: string) => {
