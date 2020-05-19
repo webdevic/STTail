@@ -41,6 +41,8 @@ const Stock = () => {
         });
     };
     // Reset message refresh when stockSymbols updated
+    // Remember to all values from the component scope (such as props and state)
+    // that change over time and that are used by the effect.
     useEffect(() => {
         stockPageDebugger("stockSymbols Changed:", { stockSymbols });
         const intervalId = setInterval(() => {
