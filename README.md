@@ -22,3 +22,13 @@ yarn start
 ```
 
 ## [Project Management](./tasking/)
+
+## TODO
+
+### -[ ] Optimize API calls, reduce waste by using cursors
+
+### -[ ] Add UI control to set refresh interval (currently default to 120000 ms)
+
+### -[ ] Integrate with Auth providers
+
+### -[ ] ~
