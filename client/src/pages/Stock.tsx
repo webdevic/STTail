@@ -3,6 +3,9 @@ import ComboBox from "../components/Organisms/ComboBox";
 import { AppBar, Paper } from "@material-ui/core";
 import MessageList from "../components/Modecules/MessageList";
 import Alert from "@material-ui/lab/Alert";
+import debug from "debug";
+
+const stockPageDebugger = debug("StockPage");
 
 // TODO: move to utils
 const deDuplicate = (items: any[]) => {
@@ -34,10 +37,10 @@ const fetchMessagesById = async (id: number, oldMsgs: any[], inputSymbols: any[]
 class RefreshManager {
     private nIntervId: any;
     public setIntervle(handler: () => void, duration: number) {
-        console.log("old setIntervle:", this.nIntervId);
+        stockPageDebugger("old setIntervle:", this.nIntervId);
         this.stop();
         this.nIntervId = setInterval(handler, duration);
-        console.log("new setIntervle:", this.nIntervId);
+        stockPageDebugger("new setIntervle:", this.nIntervId);
     }
     public stop() {
         if (this.nIntervId) clearInterval(this.nIntervId);
@@ -73,7 +76,7 @@ const Stock = () => {
     // Reset message refresh when stockSymbols updated
     useEffect(() => {
         if (stockSymbols) {
-            console.log("stockSymbols Changed:", { stockSymbols });
+            stockPageDebugger("stockSymbols Changed:", { stockSymbols });
             refreshManager.setIntervle(async () => {
                 await refreshSymbolMessage([...stockSymbols]);
             }, 120000);
@@ -82,7 +85,7 @@ const Stock = () => {
     // Reset message count
     useEffect(() => {
         if (messages) {
-            console.log("Message Count: ", messages.length);
+            stockPageDebugger("Message Count: ", messages.length);
             setMessageCount(messages.length);
         }
     }, [messages]);
