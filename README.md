@@ -25,10 +25,10 @@ yarn start
 
 ### TODO
 
--[ ] Optimize API calls, reduce waste by using cursors
+- [ ] Optimize API calls, reduce waste by using cursors
 
--[ ] Add UI control to set refresh interval (currently default to 120000 ms)
+- [ ] Add UI control to set refresh interval (currently default to 120000 ms)
 
--[ ] Integrate with Auth providers
+- [ ] Integrate with Auth providers
 
--[ ] ~
+- [ ] ~
