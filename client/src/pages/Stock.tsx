@@ -8,18 +8,18 @@ import { uniqueArrayById } from "../utils/unique";
 
 const stockPageDebugger = debug("StockPage");
 
-class RefreshManager {
-    private nIntervId: any;
-    public setIntervle(handler: () => void, duration: number) {
-        this.stop();
-        this.nIntervId = setInterval(handler, duration);
-    }
-    public stop() {
-        if (this.nIntervId) clearInterval(this.nIntervId);
-    }
-}
+const refreshInterval = 120000; // Refresh every 2 minutes
 
-const refreshManager = new RefreshManager();
+const fetchMessagesById = async (id: number, messages: any[]): Promise<any[]> => {
+    const req = fetch(`http://localhost:3000/api/v1/message/${id}`)
+        .then((res) => res.json())
+        .catch((error) => {
+            throw error;
+        });
+    const data = await req;
+    stockPageDebugger("fetchMessagesById:", { data, messages });
+    return uniqueArrayById([...data, ...messages]).sort((a: any, b: any) => b.id - a.id);
+};
 
 const Stock = () => {
     const [menuItems, setMenuItems] = useState([]);
@@ -32,43 +32,27 @@ const Stock = () => {
     const [showFetching, setShowFetching] = useState(false);
 
     // useEffect
-    const fetchMessagesById = async (id: number): Promise<any[]> => {
-        const req = fetch(`http://localhost:3000/api/v1/message/${id}`)
-            .then((res) => res.json())
-            .catch((error) => {
-                throw error;
-            });
-        const data = await req;
-        stockPageDebugger("fetchMessagesById:", { data, messages });
-        const deDuplicated = uniqueArrayById([...data, ...messages]);
-        deDuplicated.sort((a: any, b: any) => b.id - a.id);
-        return deDuplicated;
-    };
-    const refreshSymbolMessage = async (symbols: any[]) => {
-        for (let symbol of symbols) {
+    const refreshSymbolMessage = () => {
+        stockPageDebugger("refreshSymbolMessage:", { stockSymbols, messages });
+        stockSymbols.forEach(async (symbol: any) => {
             setShowFetching(true);
-            await fetchMessagesById(symbol.id)
-                .then((m: any[]) => {
-                    setMessages(m);
-                })
-                .then(() => {
-                    setShowFetching(false);
-                });
-        }
+            setMessages(await fetchMessagesById(symbol.id, messages));
+            setShowFetching(false);
+        });
     };
     // Reset message refresh when stockSymbols updated
     useEffect(() => {
-        if (stockSymbols) {
-            stockPageDebugger("stockSymbols Changed:", { stockSymbols });
-            refreshManager.setIntervle(async () => {
-                await refreshSymbolMessage([...stockSymbols]);
-            }, 120000);
-        }
-    }, [symbolCount]);
+        stockPageDebugger("stockSymbols Changed:", { stockSymbols });
+        const intervalId = setInterval(() => {
+            refreshSymbolMessage();
+        }, refreshInterval);
+
+        return () => clearInterval(intervalId);
+    }, [symbolCount, messages]);
     // Reset message count
     useEffect(() => {
         if (messages) {
-            stockPageDebugger("Message Count: ", messages.length);
+            stockPageDebugger("Message Count: ", messages.length, stockSymbols);
             setMessageCount(messages.length);
             stockSymbols.forEach(
                 (symbol: any) =>
@@ -106,7 +90,7 @@ const Stock = () => {
             .filter((symbol: any) => symbol.id !== parseInt(id))
             .concat(menuItems.filter((item: any) => item.id === parseInt(id)));
         setShowFetching(true);
-        fetchMessagesById(parseInt(id))
+        fetchMessagesById(parseInt(id), messages)
             .then((m: any[]) => {
                 setMessages(m);
             })
