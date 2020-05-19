@@ -8,18 +8,6 @@ import { uniqueArrayById } from "../utils/unique";
 
 const stockPageDebugger = debug("StockPage");
 
-const fetchMessagesById = async (id: number, oldMsgs: any[]): Promise<any[]> => {
-    const req = fetch(`http://localhost:3000/api/v1/message/${id}`)
-        .then((res) => res.json())
-        .catch((error) => {
-            throw error;
-        });
-    const data = await req;
-    const deDuplicated = uniqueArrayById([...data, ...oldMsgs]);
-    deDuplicated.sort((a: any, b: any) => b.id - a.id);
-    return deDuplicated;
-};
-
 class RefreshManager {
     private nIntervId: any;
     public setIntervle(handler: () => void, duration: number) {
@@ -44,10 +32,22 @@ const Stock = () => {
     const [showFetching, setShowFetching] = useState(false);
 
     // useEffect
+    const fetchMessagesById = async (id: number): Promise<any[]> => {
+        const req = fetch(`http://localhost:3000/api/v1/message/${id}`)
+            .then((res) => res.json())
+            .catch((error) => {
+                throw error;
+            });
+        const data = await req;
+        stockPageDebugger("fetchMessagesById:", { data, messages });
+        const deDuplicated = uniqueArrayById([...data, ...messages]);
+        deDuplicated.sort((a: any, b: any) => b.id - a.id);
+        return deDuplicated;
+    };
     const refreshSymbolMessage = async (symbols: any[]) => {
         for (let symbol of symbols) {
             setShowFetching(true);
-            await fetchMessagesById(symbol.id, [...messages])
+            await fetchMessagesById(symbol.id)
                 .then((m: any[]) => {
                     setMessages(m);
                 })
@@ -106,7 +106,7 @@ const Stock = () => {
             .filter((symbol: any) => symbol.id !== parseInt(id))
             .concat(menuItems.filter((item: any) => item.id === parseInt(id)));
         setShowFetching(true);
-        fetchMessagesById(parseInt(id), [...messages])
+        fetchMessagesById(parseInt(id))
             .then((m: any[]) => {
                 setMessages(m);
             })
