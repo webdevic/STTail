@@ -9,7 +9,7 @@ export default class SymbolController {
     public async search(req: any, res: any): Promise<void> {
         try {
             const queryObject = url.parse(req.url, true).query;
-            const keys: string[] = queryObject.key.split(",");
+            const keys: string[] = queryObject.keys.replace(" ", "").split(",");
             res.status(200).json(await this.service.search(keys));
         } catch (e) {
             res.status(e.status || 500);

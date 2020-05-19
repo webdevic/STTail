@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ComboBox from "../components/Organisms/ComboBox";
 import { AppBar, Paper } from "@material-ui/core";
 import MessageList from "../components/Modecules/MessageList";
 import Alert from "@material-ui/lab/Alert";
 
+// TODO: move to utils
 const deDuplicate = (items: any[]) => {
     const deDup: any[] = [];
     items.forEach((item) => {
@@ -48,18 +49,20 @@ const refreshManager = new RefreshManager();
 const Stock = () => {
     const [menuItems, setMenuItems] = useState([]);
     const [stockSymbols, setStockSymbols] = useState([]);
+    const [symbolCount, setSymbolCount] = useState(0);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [messages, setMessages] = useState<any[]>([]);
     const [messageCount, setMessageCount] = useState(0);
     const [showError, setShowError] = useState(false);
     const [showFetching, setShowFetching] = useState(false);
+
+    // useEffect
     const refreshSymbolMessage = async (symbols: any[]) => {
         for (let symbol of symbols) {
             setShowFetching(true);
             await fetchMessagesById(symbol.id, [...messages], [...symbols])
                 .then(([m, s]) => {
                     setMessages(m);
-                    setMessageCount(m.length);
                     setStockSymbols(s);
                 })
                 .then(() => {
@@ -67,9 +70,27 @@ const Stock = () => {
                 });
         }
     };
+    // Reset message refresh when stockSymbols updated
+    useEffect(() => {
+        if (stockSymbols) {
+            console.log("stockSymbols Changed:", { stockSymbols });
+            refreshManager.setIntervle(async () => {
+                await refreshSymbolMessage([...stockSymbols]);
+            }, 120000);
+        }
+    }, [symbolCount]);
+    // Reset message count
+    useEffect(() => {
+        if (messages) {
+            console.log("Message Count: ", messages.length);
+            setMessageCount(messages.length);
+        }
+    }, [messages]);
+
+    // handle DOM actions
     const searchSymbols = (keys: string) => {
         if (keys) {
-            fetch(`http://localhost:3000/api/v1/symbol/search?key=${keys}`)
+            fetch(`http://localhost:3000/api/v1/symbol/search?keys=${keys}`)
                 .then((res) => res.json())
                 .then((data) => {
                     setMenuItems(data);
@@ -95,13 +116,10 @@ const Stock = () => {
         fetchMessagesById(parseInt(id), [...messages], [...updateSymbols])
             .then(([m, s]) => {
                 setMessages(m);
-                setMessageCount(m.length);
                 setStockSymbols(s);
+                setSymbolCount(s.length);
             })
             .then(() => {
-                refreshManager.setIntervle(async () => {
-                    await refreshSymbolMessage([...updateSymbols]);
-                }, 120000);
                 setShowFetching(false);
             });
         setDropdownVisible(false);
@@ -122,11 +140,8 @@ const Stock = () => {
                 ))
         );
         setMessages(updateMessages);
-        setMessageCount(updateMessages.length);
         setStockSymbols(updateSymbols);
-        refreshManager.setIntervle(async () => {
-            await refreshSymbolMessage([...updateSymbols]);
-        }, 120000);
+        setSymbolCount(updateSymbols.length);
     };
     const showDropdown = () => {
         setDropdownVisible(true);
@@ -139,7 +154,7 @@ const Stock = () => {
             <AppBar position="sticky" color="default">
                 <ComboBox
                     dropdownVisible={dropdownVisible}
-                    inputLable="stock"
+                    inputLable="Search for stock(s), eg: AAPL or AAPL,BABA,BAC, etc..."
                     menuItems={menuItems}
                     stockSymbols={stockSymbols}
                     onInputFieldChange={searchSymbols}
