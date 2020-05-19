@@ -4,17 +4,9 @@ import { AppBar, Paper } from "@material-ui/core";
 import MessageList from "../components/Modecules/MessageList";
 import Alert from "@material-ui/lab/Alert";
 import debug from "debug";
+import { uniqueArrayById } from "../utils/unique";
 
 const stockPageDebugger = debug("StockPage");
-
-// TODO: move to utils
-const deDuplicate = (items: any[]) => {
-    const deDup: any[] = [];
-    items.forEach((item) => {
-        if (deDup.findIndex((i) => i.id === item.id) === -1) deDup.push(item);
-    });
-    return deDup;
-};
 
 const fetchMessagesById = async (id: number, oldMsgs: any[]): Promise<any[]> => {
     const req = fetch(`http://localhost:3000/api/v1/message/${id}`)
@@ -23,7 +15,7 @@ const fetchMessagesById = async (id: number, oldMsgs: any[]): Promise<any[]> => 
             throw error;
         });
     const data = await req;
-    const deDuplicated = deDuplicate([...data, ...oldMsgs]);
+    const deDuplicated = uniqueArrayById([...data, ...oldMsgs]);
     deDuplicated.sort((a: any, b: any) => b.id - a.id);
     return deDuplicated;
 };
