@@ -16,7 +16,7 @@ const deDuplicate = (items: any[]) => {
     return deDup;
 };
 
-const fetchMessagesById = async (id: number, oldMsgs: any[], inputSymbols: any[]): Promise<any[]> => {
+const fetchMessagesById = async (id: number, oldMsgs: any[]): Promise<any[]> => {
     const req = fetch(`http://localhost:3000/api/v1/message/${id}`)
         .then((res) => res.json())
         .catch((error) => {
@@ -25,22 +25,14 @@ const fetchMessagesById = async (id: number, oldMsgs: any[], inputSymbols: any[]
     const data = await req;
     const deDuplicated = deDuplicate([...data, ...oldMsgs]);
     deDuplicated.sort((a: any, b: any) => b.id - a.id);
-    inputSymbols.forEach(
-        (symbol: any) =>
-            (symbol.messages = deDuplicated.filter(
-                (m: any) => m.symbols.findIndex((s: any) => s.id === symbol.id) !== -1
-            ))
-    );
-    return [deDuplicated, inputSymbols];
+    return deDuplicated;
 };
 
 class RefreshManager {
     private nIntervId: any;
     public setIntervle(handler: () => void, duration: number) {
-        stockPageDebugger("old setIntervle:", this.nIntervId);
         this.stop();
         this.nIntervId = setInterval(handler, duration);
-        stockPageDebugger("new setIntervle:", this.nIntervId);
     }
     public stop() {
         if (this.nIntervId) clearInterval(this.nIntervId);
@@ -63,10 +55,9 @@ const Stock = () => {
     const refreshSymbolMessage = async (symbols: any[]) => {
         for (let symbol of symbols) {
             setShowFetching(true);
-            await fetchMessagesById(symbol.id, [...messages], [...symbols])
-                .then(([m, s]) => {
+            await fetchMessagesById(symbol.id, [...messages])
+                .then((m: any[]) => {
                     setMessages(m);
-                    setStockSymbols(s);
                 })
                 .then(() => {
                     setShowFetching(false);
@@ -87,6 +78,13 @@ const Stock = () => {
         if (messages) {
             stockPageDebugger("Message Count: ", messages.length);
             setMessageCount(messages.length);
+            stockSymbols.forEach(
+                (symbol: any) =>
+                    (symbol.messages = messages.filter(
+                        (m: any) => m.symbols.findIndex((s: any) => s.id === symbol.id) !== -1
+                    ))
+            );
+            setStockSymbols(stockSymbols);
         }
     }, [messages]);
 
@@ -116,8 +114,8 @@ const Stock = () => {
             .filter((symbol: any) => symbol.id !== parseInt(id))
             .concat(menuItems.filter((item: any) => item.id === parseInt(id)));
         setShowFetching(true);
-        fetchMessagesById(parseInt(id), [...messages], [...updateSymbols])
-            .then(([m, s]) => {
+        fetchMessagesById(parseInt(id), [...messages])
+            .then((m: any[]) => {
                 setMessages(m);
             })
             .then(() => {
