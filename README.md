@@ -12,10 +12,6 @@ yarn start
 
 ### [Browser Debugging](https://github.com/visionmedia/debug#browser-support)
 
-```code
-
-```
-
 ## [REST API Server (Express.js backend to handle CORS)](./server/)
 
 ```bash
