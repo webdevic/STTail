@@ -8,7 +8,6 @@
   "main": "index.js",
   "scripts": {
     "build": "npm run build -C client && npm run build -C server",
-    "install": "npm install && npm install -C client && npm install -C server",
     "start": "npm start -C server",
     "test": "npm run test -C client && npm run test -C server"
   },
