@@ -9,7 +9,7 @@ const createApp = (done: jest.DoneCallback) => {
         corsOptions: {},
         version: "/api/v1/",
     });
-    server.app.get("/", (req, res) => res.send("Hello ME!"));
+    server.app.get("/hello", (req, res) => res.send("Hello ME!"));
     return server.app.listen(done);
 };
 
@@ -24,7 +24,7 @@ afterAll(async (done) => {
 
 describe("Server default route", () => {
     it("should GET 'Hello ME!'", async () => {
-        const res = await request(expressServer).get("/");
+        const res = await request(expressServer).get("/hello");
         expect(res.text).toEqual("Hello ME!");
     });
 });

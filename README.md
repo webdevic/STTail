@@ -2,11 +2,22 @@
 
 StockTwits querier
 
+## Run integrated version
+
+```bash
+yarn install
+yarn test
+yarn build
+yarn start
+```
+
 ## [UI Client (create-react-app)](./client/)
 
 ```bash
 cd client
+echo "REACT_APP_API_SERVER='http://localhost:3000'" > .env
 yarn install
+yarn test
 yarn start
 ```
 
@@ -18,6 +29,7 @@ yarn start
 cd server
 echo "CORS_ALLOWED_HOSTS='http://localhost:3001'" > .env
 yarn install
+yarn test
 yarn start
 ```
 
