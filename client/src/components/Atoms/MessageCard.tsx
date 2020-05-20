@@ -1,6 +1,7 @@
 import React from "react";
 import { makeStyles, createStyles, Card, CardContent, Typography, CardMedia } from "@material-ui/core";
 import MessageBodyParser from "./MessageBodyParser";
+import timeAgo from "../../utils/time-ago";
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -21,7 +22,6 @@ const useStyles = makeStyles(() =>
             flex: "1 0 auto",
             whiteSpace: "pre-line",
             textDecoration: "none",
-            color: "hotpink",
             overflowWrap: "anywhere",
         },
         cover: {
@@ -35,19 +35,6 @@ const useStyles = makeStyles(() =>
 const MessageCard: React.FC<{ message: any }> = (props) => {
     const { message } = props;
     const classes = useStyles();
-    const createdAt = new Date(message.created_at);
-    const formatted_date =
-        createdAt.getFullYear() +
-        "-" +
-        (createdAt.getMonth() + 1) +
-        "-" +
-        createdAt.getDate() +
-        " " +
-        createdAt.getHours() +
-        ":" +
-        createdAt.getMinutes() +
-        ":" +
-        createdAt.getSeconds();
 
     return (
         <Card className={classes.root}>
@@ -58,7 +45,7 @@ const MessageCard: React.FC<{ message: any }> = (props) => {
             />
             <div className={classes.details}>
                 <CardContent className={classes.content}>
-                    <Typography component="h6" variant="h6">
+                    <Typography component="p" variant="body1">
                         <MessageBodyParser messageBody={message.body} />
                     </Typography>
                     <Typography
@@ -67,7 +54,7 @@ const MessageCard: React.FC<{ message: any }> = (props) => {
                         style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}
                     >
                         <span>{message.user.name ? message.user.name : message.user.username}</span>
-                        <span>{formatted_date}</span>
+                        <span>{timeAgo(new Date(message.created_at))}</span>
                     </Typography>
                 </CardContent>
             </div>

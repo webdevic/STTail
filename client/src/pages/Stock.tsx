@@ -10,6 +10,10 @@ const stockPageDebugger = debug("StockPage");
 
 const refreshInterval = 120000; // Refresh every 2 minutes
 
+/**
+ *
+ * @param id
+ */
 const fetchMessagesById = async (id: number): Promise<any[]> => {
     try {
         const res = await fetch(`http://localhost:3000/api/v1/message/${id}`);
@@ -19,6 +23,10 @@ const fetchMessagesById = async (id: number): Promise<any[]> => {
     }
 };
 
+/**
+ *
+ * @param keys
+ */
 const fetchStockSymbols = async (keys: string): Promise<any[]> => {
     try {
         const res = await fetch(`http://localhost:3000/api/v1/symbol/search?keys=${keys}`);
@@ -26,6 +34,16 @@ const fetchStockSymbols = async (keys: string): Promise<any[]> => {
     } catch (error) {
         throw error;
     }
+};
+
+/**
+ * Purge Messages with given offset hours
+ * @param messages
+ * @param offset
+ */
+const purgeMessages = (messages: any[], offset: number = 12): any[] => {
+    const cutoffTime = Date.now() - offset * 60 * 60 * 1000;
+    return messages.filter((message) => new Date(message.created_at).getTime() > cutoffTime);
 };
 
 const Stock = () => {
@@ -44,6 +62,7 @@ const Stock = () => {
         for (let symbol of stockSymbols) {
             setShowFetching(true);
             newMessages = uniqueArrayById([...newMessages, ...(await fetchMessagesById(symbol.id))]);
+            if (newMessages.length > 300) newMessages = purgeMessages(newMessages);
             setMessages(newMessages.sort((a, b) => b.id - a.id));
             setShowFetching(false);
         }
@@ -142,7 +161,7 @@ const Stock = () => {
                     onInputFieldFocus={showDropdown}
                 />
             </AppBar>
-            <Paper variant="outlined" style={{ background: "#f3e5f5" }}>
+            <Paper variant="outlined" style={{ background: "#fff3e0" }}>
                 <Alert
                     severity="info"
                     style={{

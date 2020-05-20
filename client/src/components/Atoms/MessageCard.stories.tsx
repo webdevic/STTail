@@ -9,7 +9,7 @@ export default {
 const message = {
     id: 213191794,
     body:
-        "$WORK  \nYale also showed a new stake in Slack Technologies Inc.\nhttps://finance.yahoo.com/amphtml/news/yale-expands-stock-portfolio-more-201928127.html",
+        "AAAA\n$WORK$AAPL $msft  \nYale also showed a new stake in Slack Technologies Inc.\nhttps://finance.yahoo.com/amphtml/news/yale-expands-stock-portfolio-more-201928127.html \nhttps://finance.yahoo.com/amphtml/news/yale-expands-stock-portfolio-more-201928127.html \n$AMZN",
     created_at: "2020-05-17T02:19:01Z",
     user: {
         id: 3359442,
@@ -61,4 +61,5 @@ const message = {
     },
 };
 
-export const TestMessageCard = () => <MessageCard message={message} />;
+export const TestMessageCard1 = () => <MessageCard message={message} />;
+export const TestMessageCard2 = () => <MessageCard message={Object.assign({ ...message }, { body: "" })} />;
