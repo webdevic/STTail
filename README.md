@@ -37,6 +37,8 @@ yarn start
 
 ### TODO
 
+- [ ] :beetle: Improve tweet message body parsing :beetle:
+
 - [ ] Optimize API calls, reduce waste by using cursors
 
 - [ ] Add UI control to set refresh interval (currently default to 120000 ms)
