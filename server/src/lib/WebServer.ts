@@ -1,11 +1,13 @@
-import { routers } from "./router";
+import { routers } from "./Router";
 import bodyParser from "body-parser";
 import compression from "compression";
 import cors, { CorsOptions } from "cors";
 import express, { Application } from "express";
 import http, { Server } from "http";
-import MessageController from "../controllers/message";
-import SymbolController from "../controllers/symbol";
+import MessageController from "../controllers/Message";
+import SymbolController from "../controllers/Symbol";
+import path from "path";
+import helmet from "helmet";
 
 export interface IServerConfig {
     corsOptions: CorsOptions;
@@ -40,6 +42,8 @@ export default class WebServer {
         app.use(bodyParser.urlencoded({ extended: true }));
         app.use(compression());
         app.use(cors(this.config.corsOptions));
+        app.use(helmet());
+        app.use(express.static(path.join(__dirname, "../../../client/build")));
         app.use(
             this.config.version,
             routers({

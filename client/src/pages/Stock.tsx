@@ -16,7 +16,7 @@ const refreshInterval = 120000; // Refresh every 2 minutes
  */
 const fetchMessagesById = async (id: number): Promise<any[]> => {
     try {
-        const res = await fetch(`http://localhost:3000/api/v1/message/${id}`);
+        const res = await fetch(`/api/v1/message/${id}`);
         return res.json();
     } catch (error) {
         throw error;
@@ -29,7 +29,7 @@ const fetchMessagesById = async (id: number): Promise<any[]> => {
  */
 const fetchStockSymbols = async (keys: string): Promise<any[]> => {
     try {
-        const res = await fetch(`http://localhost:3000/api/v1/symbol/search?keys=${keys}`);
+        const res = await fetch(`/api/v1/symbol/search?keys=${keys}`);
         return res.json();
     } catch (error) {
         throw error;
