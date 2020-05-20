@@ -10,20 +10,27 @@ const stockPageDebugger = debug("StockPage");
 
 const refreshInterval = 120000; // Refresh every 2 minutes
 
-const fetchMessagesById = async (id: number, messages: any[]): Promise<any[]> => {
-    const req = fetch(`http://localhost:3000/api/v1/message/${id}`)
-        .then((res) => res.json())
-        .catch((error) => {
-            throw error;
-        });
-    const data = await req;
-    stockPageDebugger("fetchMessagesById:", { data, messages });
-    return uniqueArrayById([...data, ...messages]).sort((a: any, b: any) => b.id - a.id);
+const fetchMessagesById = async (id: number): Promise<any[]> => {
+    try {
+        const res = await fetch(`http://localhost:3000/api/v1/message/${id}`);
+        return res.json();
+    } catch (error) {
+        throw error;
+    }
+};
+
+const fetchStockSymbols = async (keys: string): Promise<any[]> => {
+    try {
+        const res = await fetch(`http://localhost:3000/api/v1/symbol/search?keys=${keys}`);
+        return res.json();
+    } catch (error) {
+        throw error;
+    }
 };
 
 const Stock = () => {
-    const [menuItems, setMenuItems] = useState([]);
-    const [stockSymbols, setStockSymbols] = useState([]);
+    const [menuItems, setMenuItems] = useState<any[]>([]);
+    const [stockSymbols, setStockSymbols] = useState<any[]>([]);
     const [symbolCount, setSymbolCount] = useState(0);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [messages, setMessages] = useState<any[]>([]);
@@ -32,25 +39,28 @@ const Stock = () => {
     const [showFetching, setShowFetching] = useState(false);
 
     // useEffect
-    const refreshSymbolMessage = () => {
-        stockPageDebugger("refreshSymbolMessage:", { stockSymbols, messages });
-        stockSymbols.forEach(async (symbol: any) => {
+    const refreshSymbolMessage = async () => {
+        let newMessages: any[] = [...messages];
+        for (let symbol of stockSymbols) {
             setShowFetching(true);
-            setMessages(await fetchMessagesById(symbol.id, messages));
+            newMessages = uniqueArrayById([...newMessages, ...(await fetchMessagesById(symbol.id))]);
+            setMessages(newMessages.sort((a, b) => b.id - a.id));
             setShowFetching(false);
-        });
+        }
     };
     // Reset message refresh when stockSymbols updated
     // Remember to all values from the component scope (such as props and state)
     // that change over time and that are used by the effect.
     useEffect(() => {
         stockPageDebugger("stockSymbols Changed:", { stockSymbols });
-        const intervalId = setInterval(() => {
-            refreshSymbolMessage();
-        }, refreshInterval);
+        if (symbolCount > 0) {
+            const intervalId = setInterval(() => {
+                refreshSymbolMessage();
+            }, refreshInterval);
 
-        return () => clearInterval(intervalId);
-    }, [symbolCount, messages]);
+            return () => clearInterval(intervalId);
+        }
+    }, [symbolCount, messages, setMessages]);
     // Reset message count
     useEffect(() => {
         if (messages) {
@@ -67,23 +77,17 @@ const Stock = () => {
     }, [messages]);
 
     // handle DOM actions
-    const searchSymbols = (keys: string) => {
+    const searchStockSymbols = async (keys: string) => {
         if (keys) {
-            fetch(`http://localhost:3000/api/v1/symbol/search?keys=${keys}`)
-                .then((res) => res.json())
-                .then((data) => {
-                    setMenuItems(data);
-                    setDropdownVisible(true);
-                })
-                .catch((error) => {
-                    throw error;
-                });
+            setMenuItems(await fetchStockSymbols(keys));
+            setDropdownVisible(true);
         } else {
             setMenuItems([]);
             setDropdownVisible(false);
         }
     };
-    const selectSymbol = (id: string) => {
+    const selectSymbol = async (id: string) => {
+        setDropdownVisible(false);
         if (stockSymbols.length >= 10) {
             setShowError(true);
             return;
@@ -91,17 +95,13 @@ const Stock = () => {
         const updateSymbols = stockSymbols
             .filter((symbol: any) => symbol.id !== parseInt(id))
             .concat(menuItems.filter((item: any) => item.id === parseInt(id)));
-        setShowFetching(true);
-        fetchMessagesById(parseInt(id), messages)
-            .then((m: any[]) => {
-                setMessages(m);
-            })
-            .then(() => {
-                setShowFetching(false);
-            });
         setStockSymbols(updateSymbols);
         setSymbolCount(updateSymbols.length);
-        setDropdownVisible(false);
+        setShowFetching(true);
+        setMessages(
+            uniqueArrayById([...messages, ...(await fetchMessagesById(parseInt(id)))]).sort((a, b) => b.id - a.id)
+        );
+        setShowFetching(false);
     };
     const deleteSymbol = (id: string) => {
         if (stockSymbols.length <= 10) {
@@ -136,7 +136,7 @@ const Stock = () => {
                     inputLable="Search for stock(s), eg: AAPL or AAPL,BABA,BAC, etc..."
                     menuItems={menuItems}
                     stockSymbols={stockSymbols}
-                    onInputFieldChange={searchSymbols}
+                    onInputFieldChange={searchStockSymbols}
                     onItemClick={selectSymbol}
                     onSymbolDelete={deleteSymbol}
                     onInputFieldFocus={showDropdown}
