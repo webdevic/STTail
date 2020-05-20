@@ -1,4 +1,4 @@
-import WebServer from "./lib/webServer";
+import WebServer from "./WebServer";
 require("dotenv").config();
 
 const whitelist = (process.env.CORS_ALLOWED_HOSTS || "").split(",");

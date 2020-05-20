@@ -1,11 +1,11 @@
-import { routers } from "./Router";
+import { routers } from "./lib/Router";
 import bodyParser from "body-parser";
 import compression from "compression";
 import cors, { CorsOptions } from "cors";
 import express, { Application } from "express";
 import http, { Server } from "http";
-import MessageController from "../controllers/Message";
-import SymbolController from "../controllers/Symbol";
+import MessageController from "./controllers/Message";
+import SymbolController from "./controllers/Symbol";
 import path from "path";
 import helmet from "helmet";
 
