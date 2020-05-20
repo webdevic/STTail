@@ -7,10 +7,10 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "cd ./client && npm run build && cd ../server && npm run build",
-    "install": "cd ./client && npm install --production && cd ../server && npm install --production",
-    "start": "cd ./server && npm start",
-    "test": "cd ./client && npm run test && cd ../server && npm run"
+    "build": "cd ./client && yarn build && cd ../server && yarn build",
+    "install": "cd ./client && yarn install && cd ../server && yarn install",
+    "start": "cd ./server && yarn start",
+    "test": "cd ./client && yarn test && cd ../server && yarn test"
   },
   "repository": {
     "type": "git",
