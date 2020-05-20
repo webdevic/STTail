@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles, createStyles, Card, CardContent, Typography, CardMedia } from "@material-ui/core";
 import MessageBodyParser from "./MessageBodyParser";
 import timeAgo from "../../utils/time-ago";
@@ -22,6 +22,7 @@ const useStyles = makeStyles(() =>
             flex: "1 0 auto",
             whiteSpace: "pre-line",
             textDecoration: "none",
+            color: "hotpink",
             overflowWrap: "anywhere",
         },
         cover: {
@@ -34,7 +35,12 @@ const useStyles = makeStyles(() =>
 
 const MessageCard: React.FC<{ message: any }> = (props) => {
     const { message } = props;
+    const [postTime, setPostTime] = useState(timeAgo(new Date(message.created_at)));
     const classes = useStyles();
+
+    setInterval(() => {
+        setPostTime(timeAgo(new Date(message.created_at)));
+    }, 1000);
 
     return (
         <Card className={classes.root}>
@@ -45,7 +51,7 @@ const MessageCard: React.FC<{ message: any }> = (props) => {
             />
             <div className={classes.details}>
                 <CardContent className={classes.content}>
-                    <Typography component="p" variant="body1">
+                    <Typography component="h6" variant="h6">
                         <MessageBodyParser messageBody={message.body} />
                     </Typography>
                     <Typography
@@ -54,7 +60,7 @@ const MessageCard: React.FC<{ message: any }> = (props) => {
                         style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}
                     >
                         <span>{message.user.name ? message.user.name : message.user.username}</span>
-                        <span>{timeAgo(new Date(message.created_at))}</span>
+                        <span>{postTime}</span>
                     </Typography>
                 </CardContent>
             </div>

@@ -7,7 +7,7 @@ type IMBPProps = {
 const Link: React.FC<{ href: string; text: string }> = (props) => {
     const { href, text } = props;
     return (
-        <a href={href} target="_blank" style={{ textDecoration: "none", color: "blue" }}>
+        <a href={href} target="_blank" style={{ textDecoration: "none", color: "#607d8b" }}>
             {text}
         </a>
     );

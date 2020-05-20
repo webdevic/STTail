@@ -161,7 +161,7 @@ const Stock = () => {
                     onInputFieldFocus={showDropdown}
                 />
             </AppBar>
-            <Paper variant="outlined" style={{ background: "#fff3e0" }}>
+            <Paper variant="outlined" style={{ background: "#ffcc80" }}>
                 <Alert
                     severity="info"
                     style={{
