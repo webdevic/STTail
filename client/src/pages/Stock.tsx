@@ -32,9 +32,9 @@ const Stock = () => {
     const [showFetching, setShowFetching] = useState(false);
 
     // useEffect
-    const refreshSymbolMessage = async () => {
+    const refreshSymbolMessage = async (symbols = stockSymbols) => {
         let newMessages: any[] = [...messages];
-        for (let symbol of stockSymbols) {
+        for (let symbol of symbols) {
             setShowFetching(true);
             newMessages = uniqueArrayById([...newMessages, ...(await fetchMessagesById(symbol.id))]);
             if (newMessages.length > 300) newMessages = purgeMessages(newMessages);
@@ -119,6 +119,14 @@ const Stock = () => {
     const showDropdown = () => {
         setDropdownVisible(true);
     };
+    const addAllSearchResult = async (keys: string) => {
+        stockPageDebugger("addAllSearchResult", keys);
+        const updateSymbols = uniqueArrayById([...(await fetchStockSymbols(keys)), ...stockSymbols]);
+        setStockSymbols(updateSymbols);
+        setSymbolCount(updateSymbols.length);
+        setMenuItems([]);
+        await refreshSymbolMessage(updateSymbols);
+    };
     return (
         <React.Fragment>
             <Alert severity="error" style={{ marginBottom: 10, display: showError ? "flex" : "none" }}>
@@ -130,6 +138,7 @@ const Stock = () => {
                     inputLable="Search for stock(s), eg: AAPL or AAPL,BABA,BAC, etc..."
                     menuItems={menuItems}
                     stockSymbols={stockSymbols}
+                    onEnterKeyDown={addAllSearchResult}
                     onInputFieldChange={searchStockSymbols}
                     onItemClick={selectSymbol}
                     onSymbolDelete={deleteSymbol}

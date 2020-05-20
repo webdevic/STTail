@@ -6,6 +6,7 @@ type ICBProps = {
     inputLable: string;
     menuItems: any[];
     stockSymbols: any[];
+    onEnterKeyDown: (value: string) => void;
     onInputFieldChange: (value: string) => void;
     onItemClick: (value: string) => void;
     onSymbolDelete: (value: string) => void;
@@ -19,6 +20,7 @@ const ComboBox: React.FC<ICBProps> = (props) => {
         inputLable,
         menuItems,
         stockSymbols,
+        onEnterKeyDown,
         onInputFieldChange,
         onItemClick,
         onSymbolDelete,
@@ -30,6 +32,7 @@ const ComboBox: React.FC<ICBProps> = (props) => {
                 dropdownVisible={dropdownVisible}
                 inputLabel={inputLable}
                 menuItems={menuItems}
+                onEnterKeyDown={onEnterKeyDown}
                 onInputFieldChange={onInputFieldChange}
                 onItemClick={onItemClick}
                 onInputFieldFocus={onInputFieldFocus}

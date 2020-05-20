@@ -5,6 +5,7 @@ import BackspaceIcon from "@material-ui/icons/Backspace";
 
 type IIFProps = {
     label: string;
+    onEnterKeyDown: (value: string) => void;
     onInputFieldChange: (value: string) => void;
     onInputFieldFocus?: (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 };
@@ -20,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
 const InputField: React.FC<IIFProps> = (props) => {
     const classes = useStyles();
-    const { label, onInputFieldChange, onInputFieldFocus } = props;
+    const { label, onEnterKeyDown, onInputFieldChange, onInputFieldFocus } = props;
     const [keys, setKeys] = useState("");
     const debouncedKeys = useDebounce(keys, 600);
     useEffect(() => {
@@ -34,6 +35,13 @@ const InputField: React.FC<IIFProps> = (props) => {
         e.preventDefault();
         setKeys("");
     };
+    const handleEnterKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            onEnterKeyDown(keys);
+            setKeys("");
+        }
+    };
     return (
         <form noValidate autoComplete="off">
             <TextField
@@ -43,6 +51,7 @@ const InputField: React.FC<IIFProps> = (props) => {
                 id="standard-basic"
                 label={label}
                 onChange={handleInputChange}
+                onKeyDown={handleEnterKey}
                 value={keys}
                 onFocus={onInputFieldFocus}
             />

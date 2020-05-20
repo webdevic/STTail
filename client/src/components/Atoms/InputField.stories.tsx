@@ -9,6 +9,9 @@ export default {
 export const Hello = () => (
     <InputField
         label="hello"
+        onEnterKeyDown={(keys: string): void => {
+            console.log({ keys });
+        }}
         onInputFieldChange={(keys: string): void => {
             console.log({ keys });
         }}

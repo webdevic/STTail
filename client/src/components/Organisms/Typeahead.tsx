@@ -6,6 +6,7 @@ import DropdownList from "../Modecules/DropdownList";
 type ITProps = {
     inputLabel: string;
     menuItems: any[];
+    onEnterKeyDown: (value: string) => void;
     onInputFieldChange: (value: string) => void;
     onItemClick: (value: string) => void;
     onInputFieldFocus: () => void;
@@ -24,11 +25,20 @@ const useStyles = makeStyles(() =>
 
 const Typeahead: React.FC<ITProps> = (props) => {
     const classes = useStyles();
-    const { dropdownVisible, inputLabel, menuItems, onInputFieldChange, onItemClick, onInputFieldFocus } = props;
+    const {
+        dropdownVisible,
+        inputLabel,
+        menuItems,
+        onEnterKeyDown,
+        onInputFieldChange,
+        onItemClick,
+        onInputFieldFocus,
+    } = props;
     return (
         <Box className={classes.root}>
             <InputField
                 label={inputLabel}
+                onEnterKeyDown={onEnterKeyDown}
                 onInputFieldChange={onInputFieldChange}
                 onInputFieldFocus={onInputFieldFocus}
             />
