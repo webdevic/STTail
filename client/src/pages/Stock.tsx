@@ -34,13 +34,16 @@ const Stock = () => {
     // useEffect
     const refreshSymbolMessage = async (symbols = stockSymbols) => {
         let newMessages: any[] = [...messages];
+        setShowFetching(true);
+        stockPageDebugger("refreshSymbolMessage fetching");
         for (let symbol of symbols) {
-            setShowFetching(true);
             newMessages = uniqueArrayById([...newMessages, ...(await fetchMessagesById(symbol.id))]);
             if (newMessages.length > 300) newMessages = purgeMessages(newMessages);
-            setMessages(newMessages.sort((a, b) => b.id - a.id));
-            setShowFetching(false);
+            stockPageDebugger("refreshSymbolMessage", newMessages);
         }
+        stockPageDebugger("refreshSymbolMessage fetched");
+        setMessages(newMessages.sort((a, b) => b.id - a.id));
+        setShowFetching(false);
     };
     // Reset message refresh when stockSymbols updated
     // Remember to all values from the component scope (such as props and state)
@@ -72,18 +75,13 @@ const Stock = () => {
 
     // handle DOM actions
     const searchStockSymbols = async (keys: string) => {
-        if (keys) {
-            setMenuItems(await fetchStockSymbols(keys));
-            setDropdownVisible(true);
-        } else {
-            setMenuItems([]);
-            setDropdownVisible(false);
-        }
+        setMenuItems(keys ? await fetchStockSymbols(keys) : []);
+        setDropdownVisible(!!keys);
     };
     const selectSymbol = async (id: string) => {
         setDropdownVisible(false);
+        setShowError(stockSymbols.length >= 10);
         if (stockSymbols.length >= 10) {
-            setShowError(true);
             return;
         }
         const updateSymbols = stockSymbols
@@ -98,9 +96,7 @@ const Stock = () => {
         setShowFetching(false);
     };
     const deleteSymbol = (id: string) => {
-        if (stockSymbols.length <= 10) {
-            setShowError(false);
-        }
+        setShowError(stockSymbols.length > 10);
         const updateMessages = messages.filter((message: any) => {
             if (message.symbols.findIndex((symbol: any) => symbol.id === parseInt(id)) === -1) return true;
             return false;
