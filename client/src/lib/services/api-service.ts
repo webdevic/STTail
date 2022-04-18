@@ -16,6 +16,7 @@ export const fetchMessagesById = async (id: number): Promise<any[]> => {
         const res = await fetch(`${endpoint}/api/v1/message/${id}`);
         return res.json();
     } catch (error) {
+        console.log(error)
         throw error;
     }
 };
